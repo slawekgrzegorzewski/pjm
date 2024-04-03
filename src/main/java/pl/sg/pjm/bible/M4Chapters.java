@@ -33,6 +33,15 @@ public class M4Chapters {
         calculateStatistics(all);
     }
 
+    public static Map<Book, List<ChapterVerse>> calculateStatistics(Path videosLocation) {
+        List<Book> allBooks = Stream.of(Book.values()).collect(Collectors.toList());
+        try (Stream<Path> walk = Files.walk(videosLocation).filter(isFileInBooks(allBooks))) {
+            return videoStats(walk);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     private static void calculateStatistics(List<Book> booksToGenerateStats) {
         try (Stream<Path> walk = Files.walk(VIDEOS_LOCATION).filter(isFileInBooks(booksToGenerateStats))) {
             Map<Book, List<ChapterVerse>> allBooks = videoStats(walk);

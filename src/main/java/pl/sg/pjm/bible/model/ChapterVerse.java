@@ -30,6 +30,10 @@ public class ChapterVerse implements Comparable<ChapterVerse> {
         throw new RuntimeException();
     }
 
+    public static ChapterVerse of(int chapter, int verse) {
+        return new ChapterVerse(chapter, verse);
+    }
+
     ChapterVerse(int chapter, int verse) {
         this.chapter = chapter;
         this.verse = verse;

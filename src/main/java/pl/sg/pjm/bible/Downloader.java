@@ -14,23 +14,27 @@ public class Downloader {
     private final static Path BIBLE_FILES = Paths.get("D:", "Development", "bibleFiles");
 
     public static void main(String[] args) {
+        DownloadResult result = download(BIBLE_FILES);
+        if (result.isFail()) {
+            System.out.println("Failed to download following files");
+            System.out.println(String.join("\n", result.getUrls()));
+        }
+    }
+
+    public static DownloadResult download(Path targetDirectory) {
         List<String> toDownload = IntStream.range(0, 67)
                 .parallel()
                 .mapToObj(new PJMBibleLinksRetriever()::getChaptersLinkForBook)
                 .flatMap(List::stream)
                 .map(Object::toString)
                 .collect(Collectors.toList());
-        DownloadResult result = LinkDownloaderBuilder.of(toDownload)
+        return LinkDownloaderBuilder.of(toDownload)
                 .numberOfThreads(10)
                 .as(url -> {
                     String[] split = url.split("/");
                     return split[split.length - 1];
                 })
-                .to(BIBLE_FILES)
+                .to(targetDirectory)
                 .download();
-        if (result.isFail()) {
-            System.out.println("Failed to download following files");
-            System.out.println(String.join("\n", result.getUrls()));
-        }
     }
 }
